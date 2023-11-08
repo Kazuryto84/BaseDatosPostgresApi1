@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { User } = require("../db");
+const { User, Post } = require("../db");
 const axios = require("axios");
 
 const createUserDb = async (name, email, phone) => {
@@ -7,10 +7,26 @@ const createUserDb = async (name, email, phone) => {
    return newUser;
 };
 
+/*
 const getUserDb = async () => {
     const allUsersDB = await User.findAll();
     return allUsersDB;
 };
+
+*/
+const deleteUserDb = async (id) => {
+    await User.destroy({ where: { id } });
+  };
+
+  const getUserDb = async () => {
+    const allUsersDB = await User.findAll({
+      include: {
+        model: Post,
+        attributes: ["title", "body"],
+      },
+    });
+    return allUsersDB;
+  };
 
 const getUserApi = async () => {
     const peticion = (await axios("https://jsonplaceholder.typicode.com/users")).data;
@@ -79,5 +95,6 @@ const getUserDb = async () => {
 module.exports = {
     createUserDb,
     getUserById,
-    getAllUsers
+    getAllUsers,
+    deleteUserDb
 };
